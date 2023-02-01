@@ -1,4 +1,4 @@
-import styles from "../../../styles/Game.module.css"
+import styles from "../../../styles/game.module.css"
 import { useEffect, useState } from "react"
 import Door from "../../../components/Door"
 import { CreateDoors, updateDoors } from "../../../functions/doors"
@@ -9,7 +9,19 @@ import { useRouter } from "next/router"
 const Game = () => {
   const router = useRouter()
 
+  const [valid, setValid] = useState(false)
   const [doors, setDoors] = useState([])
+
+
+  useEffect(() => {
+    const doors = +router.query.doors
+    const withPresent = +router.query.withPresent
+
+    const UnitValidDoors = doors >= 3 && doors <= 100
+    const withValidPresent = withPresent >= 1 && withPresent <= doors
+
+    setValid(UnitValidDoors && withValidPresent)
+  }, [router.query.doors, router.query.withPresent, valid])
 
   useEffect(() => {
     const doors = +router.query.doors
@@ -31,7 +43,10 @@ const Game = () => {
   return (
     <div id={styles.game}>
       <div className={styles.doors}>
-        {doorsRender()}
+        {valid ? 
+          doorsRender() :
+          <h2>Valores inválidos</h2>
+        }
       </div>
       <div className={styles.buttons}>
         <Link href="/">
